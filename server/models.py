@@ -23,3 +23,17 @@ class Category(db.Model):
 
     def __repr__(self):
         return f"<Category {self.name}>"
+    
+class Item(db.Model):
+    __tablename__ = "items"
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey("categories.id"), nullable=False)
+
+    image_url = db.Column(db.String(255))
+
+    def __repr__(self):
+        return f"<Item {self.title}>"
