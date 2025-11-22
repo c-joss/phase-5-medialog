@@ -99,6 +99,44 @@ def create_app():
             "category_id": item.category_id,
             "image_url": item.image_url,
         }, 200
+    
+    @app.patch("/items/<int:item_id>")
+    def update_item(item_id):
+
+        item = Item.query.get(item_id)
+
+        if not item:
+            return {"errors": [f"Item with id {item_id} not found"]}, 404
+        
+        data = request.get_json() or {}
+
+        if not data:
+            return {"errors": ["No data provided to update"]}, 400
+        
+        if "title" in data:
+            if not data["title"]:
+                return {"errors": ["Title cannot be empty"]}, 400
+            item.title = data["title"]
+
+        if "category_id" in data:
+            category = Category.query.get(data["category_id"])
+            if not category:
+                return {"errors": ["Category does not exist"]}, 400
+            item.category_id = data["category_id"]
+
+        if "image_url" in data:
+            item.image_url = data["image_url"]
+
+        db.session.commit()
+
+        return {
+            "id": item.id,
+            "title": item.title,
+            "user_id": item.user_id,
+            "category_id": item.category_id,
+            "image_url": item.image_url,
+        }, 200
+
 
 
     return app
