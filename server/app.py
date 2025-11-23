@@ -18,6 +18,12 @@ def review_to_dict(review):
         "item_id": review.item_id,
     }
 
+def user_to_dict(user):
+    return {
+        "id": user.id,
+        "username": user.username,
+    }
+
 def create_app():
 
     app = Flask(__name__)
@@ -37,6 +43,37 @@ def create_app():
     @app.route("/")
     def index():
         return jsonify({"message": "Medialog API is running"}), 200
+    
+    @app.post("/users")
+    def create_user():
+        data = request.get_json() or {}
+
+        username = data.get("username")
+        if not username:
+            return {"errors": ["Username is required"]}, 400
+
+        existing = User.query.filter_by(username=username).first()
+        if existing:
+            return {"errors": ["Username already taken"]}, 400
+
+        user = User(username=username)
+        db.session.add(user)
+        db.session.commit()
+
+        return user_to_dict(user), 201
+    
+    @app.get("/users")
+    def list_users():
+        users = User.query.all()
+        return jsonify([user_to_dict(u) for u in users]), 200
+    
+    @app.get("/users/<int:user_id>")
+    def get_user(user_id):
+        user = User.query.get(user_id)
+        if not user:
+            return {"errors": [f"User with id {user_id} not found"]}, 404
+
+        return user_to_dict(user), 200
     
     @app.post("/items")
     def create_item():
