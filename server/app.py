@@ -23,6 +23,9 @@ def user_to_dict(user):
     return {
         "id": user.id,
         "username": user.username,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "email": user.email,
     }
 
 def create_app():
@@ -38,28 +41,43 @@ def create_app():
     def index():
         return jsonify({"message": "Medialog API is running"}), 200
     
+    
     @app.post("/users")
     def create_user():
         data = request.get_json() or {}
 
-        username = data.get("username")
-        if not username:
-            return {"errors": ["Username is required"]}, 400
-
-        existing = User.query.filter_by(username=username).first()
-        if existing:
+        required = ["username", "first_name", "last_name", "email", "password"]
+        missing = [field for field in required if field not in data or not data[field]]
+        if missing:
+            return {"errors": [f"Missing or empty field: {m}" for m in missing]}, 400
+        
+        existing_username = User.query.filter_by(username=data["username"]).first()
+        if existing_username:
             return {"errors": ["Username already taken"]}, 400
 
-        user = User(username=username)
+        existing_email = User.query.filter_by(email=data["email"]).first()
+        if existing_email:
+            return {"errors": ["Email already in use"]}, 400
+
+        user = User(
+            username=data["username"],
+            first_name=data["first_name"],
+            last_name=data["last_name"],
+            email=data["email"],
+            password=data["password"],
+        )
+
         db.session.add(user)
         db.session.commit()
 
         return user_to_dict(user), 201
     
+    
     @app.get("/users")
     def list_users():
         users = User.query.all()
         return jsonify([user_to_dict(u) for u in users]), 200
+    
     
     @app.get("/users/<int:user_id>")
     def get_user(user_id):
@@ -68,6 +86,7 @@ def create_app():
             return {"errors": [f"User with id {user_id} not found"]}, 404
 
         return user_to_dict(user), 200
+    
     
     @app.post("/items")
     def create_item():
@@ -108,6 +127,7 @@ def create_app():
             "creators": [c.name for c in new_item.creators],
         }, 201
     
+    
     @app.get("/items")
     def list_items():
 
@@ -127,6 +147,7 @@ def create_app():
 
         return jsonify(results), 200
     
+    
     @app.get("/items/<int:item_id>")
     def get_item(item_id):
 
@@ -144,6 +165,7 @@ def create_app():
             "tags": [t.name for t in item.tags],
             "creators": [c.name for c in item.creators],
         }, 200
+    
     
     @app.patch("/items/<int:item_id>")
     def update_item(item_id):
@@ -184,6 +206,7 @@ def create_app():
             "creators": [c.name for c in item.creators],
         }, 200
     
+    
     @app.delete("/items/<int:item_id>")
     def delete_item(item_id):
 
@@ -196,6 +219,7 @@ def create_app():
         db.session.commit()
 
         return {"message": f"Item {item_id} deleted successfully"}, 200
+    
     
     @app.post("/reviews")
     def create_review():
@@ -234,11 +258,13 @@ def create_app():
 
         return review_to_dict(review), 201
     
+    
     @app.get("/reviews")
     def list_reviews():
 
         reviews = Review.query.all()
         return jsonify([review_to_dict(r) for r in reviews]), 200
+    
     
     @app.get("/items/<int:item_id>/reviews")
     def list_item_reviews(item_id):
@@ -249,6 +275,7 @@ def create_app():
         
         reviews = Review.query.filter_by(item_id=item_id).all()
         return jsonify([review_to_dict(r) for r in reviews]), 200
+    
     
     @app.get("/tags")
     def list_tags():
@@ -263,6 +290,7 @@ def create_app():
             })
 
         return jsonify(results), 200
+    
     
     @app.post("/tags")
     def create_tag():
@@ -282,6 +310,7 @@ def create_app():
         db.session.commit()
 
         return {"id": tag.id, "name": tag.name}, 201
+    
     
     @app.post("/items/<int:item_id>/tags")
     def set_item_tags(item_id):
@@ -314,6 +343,7 @@ def create_app():
             "creators": [c.name for c in item.creators],
         }, 200
     
+    
     @app.get("/creators")
     def list_creators():
 
@@ -327,6 +357,7 @@ def create_app():
             })
 
         return jsonify(results), 200
+    
     
     @app.post("/creators")
     def create_creator():
@@ -346,6 +377,7 @@ def create_app():
         db.session.commit()
 
         return {"id": creator.id, "name": creator.name}, 201
+    
     
     @app.post("/items/<int:item_id>/creators")
     def set_item_creators(item_id):

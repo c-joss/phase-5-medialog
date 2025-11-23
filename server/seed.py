@@ -25,8 +25,21 @@ def run_seed():
 
         print("Creating seed data...")
 
-        jack = User(username="jack")
-        guest = User(username="guest")
+        jack = User(
+            username="jack",
+            first_name="Jack",
+            last_name="Sparrow",
+            email="jack@example.com",
+            password="password123",
+        )
+
+        guest = User(
+            username="guest",
+            first_name="Guest",
+            last_name="User",
+            email="guest@example.com",
+            password="guestpassword",
+        )
 
         game_cat = Category(name="Game")
         book_cat = Category(name="Book")
