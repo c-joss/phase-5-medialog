@@ -5,10 +5,18 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from dotenv import load_dotenv
 from flask import request
-from .models import db, User, Category, Item, Tag, Creator
+from .models import db, User, Category, Item, Tag, Creator, Review
 
 load_dotenv()
 
+def review_to_dict(review):
+    return {
+        "id": review.id,
+        "rating": review.rating,
+        "text": review.text,
+        "user_id": review.user_id,
+        "item_id": review.item_id,
+    }
 
 def create_app():
 
@@ -157,6 +165,59 @@ def create_app():
         db.session.commit()
 
         return {"message": f"Item {item_id} deleted successfully"}, 200
+    
+    @app.post("/reviews")
+    def create_review():
+
+        data = request.get_json() or {}
+        
+        required = ["rating", "user_id", "item_id"]
+        missing = [field for field in required if field not in data]
+        if missing:
+            return {"errors": [f"Missing field: {m}" for m in missing]}, 400        
+        try:
+            rating = int(data["rating"])
+        except (TypeError, ValueError):
+            return {"errors": ["Rating must be an integer between 1 and 5"]}, 400
+        
+        if rating < 1 or rating > 5:
+            return {"errors": ["Rating must be between 1 and 5"]}, 400
+        
+        user = User.query.get(data["user_id"])
+        if not user:
+            return {"errors": ["User does not exist"]}, 400
+        
+        item = Item.query.get(data["item_id"])
+        if not item:
+            return {"errors": ["Item does not exist"]}, 400
+        
+        review = Review(
+            rating=rating,
+            text=data.get("text"),
+            user_id=user.id,
+            item_id=item.id,
+        )
+
+        db.session.add(review)
+        db.session.commit()
+
+        return review_to_dict(review), 201
+    
+    @app.get("/reviews")
+    def list_reviews():
+
+        reviews = Review.query.all()
+        return jsonify([review_to_dict(r) for r in reviews]), 200
+    
+    @app.get("/items/<int:item_id>/reviews")
+    def list_item_reviews(item_id):
+
+        item = Item.query.get(item_id)
+        if not item:
+            return {"errors": [f"Item with id {item_id} not found"]}, 404
+        
+        reviews = Review.query.filter_by(item_id=item_id).all()
+        return jsonify([review_to_dict(r) for r in reviews]), 200
     
     @app.get("/tags")
     def list_tags():
