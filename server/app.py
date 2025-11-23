@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from dotenv import load_dotenv
 from flask import request
-from .models import db, User, Category, Item, Tag
+from .models import db, User, Category, Item, Tag, Creator
 
 load_dotenv()
 
@@ -66,6 +66,7 @@ def create_app():
             "category_id": new_item.category_id,
             "image_url": new_item.image_url,
             "tags": [t.name for t in new_item.tags],
+            "creators": [c.name for c in new_item.creators],
         }, 201
     
     @app.get("/items")
@@ -82,6 +83,7 @@ def create_app():
                 "category_id": item.category_id,
                 "image_url": item.image_url,
                 "tags": [t.name for t in item.tags],
+                "creators": [c.name for c in item.creators],
             })
 
         return jsonify(results), 200
@@ -101,6 +103,7 @@ def create_app():
             "category_id": item.category_id,
             "image_url": item.image_url,
             "tags": [t.name for t in item.tags],
+            "creators": [c.name for c in item.creators],
         }, 200
     
     @app.patch("/items/<int:item_id>")
@@ -139,6 +142,7 @@ def create_app():
             "category_id": item.category_id,
             "image_url": item.image_url,
             "tags": [t.name for t in item.tags],
+            "creators": [c.name for c in item.creators],
         }, 200
     
     @app.delete("/items/<int:item_id>")
@@ -215,8 +219,73 @@ def create_app():
             "category_id": item.category_id,
             "image_url": item.image_url,
             "tags": [t.name for t in item.tags],
+            "creators": [c.name for c in item.creators],
         }, 200
+    
+    @app.get("/creators")
+    def list_creators():
 
+        creators = Creator.query.all()
+
+        results = []
+        for creator in creators:
+            results.append({
+                "id": creator.id,
+                "name": creator.name,
+            })
+
+        return jsonify(results), 200
+    
+    @app.post("/creators")
+    def create_creator():
+
+        data = request.get_json() or {}
+
+        name = data.get("name")
+        if not name:
+            return {"errors": ["Creator name is required"]}, 400
+        
+        existing = Creator.query.filter_by(name=name).first()
+        if existing:
+            return {"errors": ["Creator with this name already exists"]}, 400
+        
+        creator = Creator(name=name)
+        db.session.add(creator)
+        db.session.commit()
+
+        return {"id": creator.id, "name": creator.name}, 201
+    
+    @app.post("/items/<int:item_id>/creators")
+    def set_item_creators(item_id):
+
+        item = Item.query.get(item_id)
+        if not item:
+            return {"errors": [f"Item with id {item_id} not found"]}, 404
+        
+        data = request.get_json() or {}
+        creator_ids = data.get("creator_ids")
+
+        if not isinstance(creator_ids, list) or not creator_ids:
+            return {"errors": ["creator_ids must be a non-empty list"]}, 400
+        
+        creators = Creator.query.filter(Creator.id.in_(creator_ids)).all()
+
+        if len(creators) != len(creator_ids):
+            return {"errors": ["One or more creator_ids do not exist"]}, 400
+        
+        item.creators = creators
+        db.session.commit()
+
+        return {
+            "id": item.id,
+            "title": item.title,
+            "user_id": item.user_id,
+            "category_id": item.category_id,
+            "image_url": item.image_url,
+            "tags": [t.name for t in item.tags],
+            "creators": [c.name for c in item.creators],
+        }, 200
+ 
     return app
 
 app = create_app()
