@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from dotenv import load_dotenv
 from flask import request
-from .models import db, User, Category, Item
+from .models import db, User, Category, Item, Tag
 
 load_dotenv()
 
@@ -53,7 +53,7 @@ def create_app():
             title=data["title"],
             user_id=data["user_id"],
             category_id=data["category_id"],
-            image_url=data.get("image_url")
+            image_url=data.get("image_url"),
         )
 
         db.session.add(new_item)
@@ -65,6 +65,7 @@ def create_app():
             "user_id": new_item.user_id,
             "category_id": new_item.category_id,
             "image_url": new_item.image_url,
+            "tags": [t.name for t in new_item.tags],
         }, 201
     
     @app.get("/items")
@@ -80,6 +81,7 @@ def create_app():
                 "user_id": item.user_id,
                 "category_id": item.category_id,
                 "image_url": item.image_url,
+                "tags": [t.name for t in item.tags],
             })
 
         return jsonify(results), 200
@@ -98,6 +100,7 @@ def create_app():
             "user_id": item.user_id,
             "category_id": item.category_id,
             "image_url": item.image_url,
+            "tags": [t.name for t in item.tags],
         }, 200
     
     @app.patch("/items/<int:item_id>")
@@ -135,6 +138,7 @@ def create_app():
             "user_id": item.user_id,
             "category_id": item.category_id,
             "image_url": item.image_url,
+            "tags": [t.name for t in item.tags],
         }, 200
     
     @app.delete("/items/<int:item_id>")
@@ -149,8 +153,69 @@ def create_app():
         db.session.commit()
 
         return {"message": f"Item {item_id} deleted successfully"}, 200
+    
+    @app.get("/tags")
+    def list_tags():
 
+        tags = Tag.query.all()
 
+        results = []
+        for tag in tags:
+            results.append({
+                "id": tag.id,
+                "name": tag.name,
+            })
+
+        return jsonify(results), 200
+    
+    @app.post("/tags")
+    def create_tag():
+
+        data = request.get_json() or {}
+
+        name = data.get("name")
+        if not name:
+            return {"errors": ["Tag name is required"]}, 400
+    
+        existing = Tag.query.filter_by(name=name).first()
+        if existing:
+            return {"errors": ["Tag with this name already exists"]}, 400
+    
+        tag = Tag(name=name)
+        db.session.add(tag)
+        db.session.commit()
+
+        return {"id": tag.id, "name": tag.name}, 201
+    
+    @app.post("/items/<int:item_id>/tags")
+    def set_item_tags(item_id):
+
+        item = Item.query.get(item_id)
+        if not item:
+            return {"errors": [f"Item with id {item_id} not found"]},404
+        
+        data = request.get_json() or {}
+        tag_ids = data.get("tag_ids")
+
+        if not isinstance(tag_ids, list) or not tag_ids:
+            return {"errors": ["tag_ids must be a non-empty list"]}, 400
+        
+        tags = Tag.query.filter(Tag.id.in_(tag_ids)).all()
+
+        if len(tags) != len(tag_ids):
+            return {"errors": ["One or more tag_ids do not exist"]}, 400
+        
+        item.tags = tags
+        db.session.commit()
+
+        return {
+            "id": item.id,
+            "title": item.title,
+            "user_id": item.user_id,
+            "category_id": item.category_id,
+            "image_url": item.image_url,
+            "tags": [t.name for t in item.tags],
+        }, 200
 
     return app
 
