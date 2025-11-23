@@ -101,3 +101,21 @@ class ItemCreator(db.Model):
     __table_args__ = (
         db.UniqueConstraint("item_id", "creator_id", name="uix_item_creator"),
     )
+
+class Review(db.Model):
+
+    __tablename__ = "reviews"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    rating = db.Column(db.Integer, nullable=True)
+    text = db.Column(db.String(255), nullable=True)
+
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    item_id = db.Column(db.Integer, db.ForeignKey("items.id"), nullable=False)
+
+    user = db.relationship("User", backref="reviews")
+    item = db.relationship("Item", backref="reviews")
+
+    def __repr__(self):
+        return f"<Review user={self.user_id} item={self.item_id} rating={self.rating}>"
