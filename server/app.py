@@ -5,7 +5,7 @@ from flask import Flask, jsonify
 from flask_migrate import Migrate
 from flask_cors import CORS
 from dotenv import load_dotenv
-from flask import request
+from flask import request, jsonify
 from .models import db, User, Category, Item, Tag, Creator, Review
 
 load_dotenv()
@@ -86,6 +86,38 @@ def create_app():
             return {"errors": [f"User with id {user_id} not found"]}, 404
 
         return user_to_dict(user), 200
+    
+
+    @app.post("/login")
+    def login():
+        data = request.get_json() or {}
+
+        required = ["email", "password"]
+        missing = [field for field in required if field not in data]
+        if missing:
+            return {"errors": [f"Missing field: {m}" for m in missing]}, 400
+
+        email = data.get("email")
+        password = data.get("password")
+
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            return {"errors": ["Invalid email or password"]}, 401
+
+        if user.password != password:
+            return {"errors": ["Invalid email or password"]}, 401
+
+        return {
+            "message": "Login successful",
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "email": user.email,
+            },
+        }, 200
+
     
     
     @app.post("/items")
