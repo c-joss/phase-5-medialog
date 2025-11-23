@@ -226,17 +226,20 @@ def create_app():
 
         data = request.get_json() or {}
         
-        required = ["rating", "user_id", "item_id"]
+        required = ["user_id", "item_id"]
         missing = [field for field in required if field not in data]
         if missing:
             return {"errors": [f"Missing field: {m}" for m in missing]}, 400        
-        try:
-            rating = int(data["rating"])
-        except (TypeError, ValueError):
-            return {"errors": ["Rating must be an integer between 1 and 5"]}, 400
         
-        if rating < 1 or rating > 5:
-            return {"errors": ["Rating must be between 1 and 5"]}, 400
+        rating_value = None
+        if "rating" in data and data["rating"] is not None:
+            try:
+                rating_value = int(data["rating"])
+            except (TypeError, ValueError):
+                return {"errors": ["Rating must be an integer between 1 and 5"]}, 400
+
+            if rating_value < 1 or rating_value > 5:
+                return {"errors": ["Rating must be between 1 and 5"]}, 400
         
         user = User.query.get(data["user_id"])
         if not user:
@@ -247,7 +250,7 @@ def create_app():
             return {"errors": ["Item does not exist"]}, 400
         
         review = Review(
-            rating=rating,
+            rating=rating_value,
             text=data.get("text"),
             user_id=user.id,
             item_id=item.id,
