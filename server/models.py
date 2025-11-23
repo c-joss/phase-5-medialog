@@ -35,5 +35,37 @@ class Item(db.Model):
 
     image_url = db.Column(db.String(255))
 
+    tags = db.relationship(
+        "Tag",
+        secondary="item_tags",
+        back_populates="items"
+    )
+
     def __repr__(self):
         return f"<Item {self.title}>"
+    
+class Tag(db.Model):
+    __tablename__ = "tags"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False, unique=True)
+
+    items = db.relationship(
+        "Item",
+        secondary="item_tags",
+        back_populates="tags"
+    )
+
+    def __repr__(self):
+        return f"<Tag {self.name}>"
+    
+class ItemTag(db.Model):
+    __tablename__ = "item_tags"
+
+    id = db.Column(db.Integer, primary_key=True)
+    item_id = db.Column(db.Integer, db.ForeignKey("items.id"), nullable=False)
+    tag_id = db.Column(db.Integer, db.ForeignKey("tags.id"), nullable=False)
+
+    __table_args__ = (
+        db.UniqueConstraint("item_id", "tag_id", name="uix_item_tag"),
+    )
