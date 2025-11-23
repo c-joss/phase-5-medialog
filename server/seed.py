@@ -7,6 +7,8 @@ from .models import (
     Tag,
     Creator,
     Review,
+    ItemTag,
+    ItemCreator,
 )
 
 
@@ -14,11 +16,13 @@ def run_seed():
     with app.app_context():
         print("Clearing existing data...")
 
+        ItemTag.query.delete()
+        ItemCreator.query.delete()
         Review.query.delete()
         Item.query.delete()
-        Category.query.delete()
         Tag.query.delete()
         Creator.query.delete()
+        Category.query.delete()
         User.query.delete()
 
         db.session.commit()
