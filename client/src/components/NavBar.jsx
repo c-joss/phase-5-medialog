@@ -13,6 +13,8 @@ function NavBar() {
       <div>
         <Link to="/items">Items</Link>
 
+        {user && <Link to="/settings">Settings</Link>}
+
         {user && <Link to="/items/new">Add Item</Link>}
 
         {user ? (

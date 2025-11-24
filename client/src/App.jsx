@@ -7,6 +7,11 @@ import ItemDetailPage from './pages/ItemDetailPage';
 import NotFoundPage from './pages/NotFoundPage';
 import CreateItemPage from './pages/CreateItemPage';
 import DashboardPage from './pages/DashboardPage';
+import SettingsPage from './pages/SettingsPage';
+import ExportPage from './pages/ExportPage';
+import ManageTagsPage from './pages/ManageTagsPage';
+import ManageCategoriesPage from './pages/ManageCategoriesPage';
+import ManageCreatorsPage from './pages/ManageCreatorsPage';
 
 function App() {
   return (
@@ -19,6 +24,11 @@ function App() {
           <Route path="/items/:id" element={<ItemDetailPage />} />
           <Route path="/items/new" element={<CreateItemPage />} />
           <Route path="*" element={<NotFoundPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/settings/export" element={<ExportPage />} />
+          <Route path="/settings/tags" element={<ManageTagsPage />} />
+          <Route path="/settings/categories" element={<ManageCategoriesPage />} />
+          <Route path="/settings/creators" element={<ManageCreatorsPage />} />
         </Routes>
       </Layout>
     </BrowserRouter>
