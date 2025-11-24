@@ -56,3 +56,7 @@ export function deleteItem(id) {
     method: 'DELETE',
   });
 }
+
+export function fetchCategories() {
+  return request('/categories');
+}

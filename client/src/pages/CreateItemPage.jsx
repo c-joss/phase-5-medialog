@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { createItem } from '../api/apiclient';
+import React, { useEffect, useState } from 'react';
+import { createItem, fetchCategories } from '../api/apiclient';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -10,15 +10,18 @@ function CreateItemPage() {
     category_id: '',
   });
 
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
+
   function handleChange(e) {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   }
-
-  const { user } = useAuth();
-  const navigate = useNavigate();
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -48,6 +51,21 @@ function CreateItemPage() {
     }
   }
 
+  useEffect(() => {
+    async function loadCategories() {
+      try {
+        const data = await fetchCategories();
+        setCategories(data);
+      } catch (err) {
+        setError(err.message || 'Failed to load categories');
+      } finally {
+        setCategoriesLoading(false);
+      }
+    }
+
+    loadCategories();
+  }, []);
+
   return (
     <div>
       <h2>Add New Item</h2>
@@ -62,8 +80,18 @@ function CreateItemPage() {
         </label>
 
         <label>
-          Category ID{' '}
-          <input name="category_id" value={form.category_id} onChange={handleChange} required />
+          Category
+          <select name="category_id" value={form.category_id} onChange={handleChange} required>
+            <option value="">
+              {categoriesLoading ? 'Loading categories...' : 'Select a category'}
+            </option>
+
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
         </label>
 
         <button type="submit" disabled={loading}>
