@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { createItem } from '../api/apiclient';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 function CreateItemPage() {
   const [form, setForm] = useState({
@@ -12,9 +15,37 @@ function CreateItemPage() {
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
-  function handleSubmit(e) {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e) {
     e.preventDefault();
-    console.log('Submitting form:', form);
+    setError(null);
+
+    if (!user) {
+      setError('You must be logged in to create an item.');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const payload = {
+        title: form.title,
+        image_url: form.image_url || null,
+        category_id: Number(form.category_id),
+        user_id: user.id,
+      };
+
+      const newItem = await createItem(payload);
+      navigate(`/items/${newItem.id}`);
+    } catch (err) {
+      setError(err.message || 'Something went wrong while creating the item.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -35,7 +66,11 @@ function CreateItemPage() {
           <input name="category_id" value={form.category_id} onChange={handleChange} required />
         </label>
 
-        <button type="submit">Create Item</button>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Creating...' : 'Create Item'}
+        </button>
+
+        {error && <p className="error-text">{error}</p>}
       </form>
     </div>
   );

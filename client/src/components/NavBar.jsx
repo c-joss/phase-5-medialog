@@ -12,10 +12,15 @@ function NavBar() {
       </div>
       <div>
         <Link to="/items">Items</Link>
+
+        {user && <Link to="/items/new">Add Item</Link>}
+
         {user ? (
           <>
             <span>{user.first_name || user.username}</span>
-            <button onClick={logoutUser}>Logout</button>
+            <button type="button" onClick={logoutUser}>
+              Logout
+            </button>
           </>
         ) : (
           <Link to="/login">Login</Link>
