@@ -29,8 +29,9 @@ export function login(email, password) {
   });
 }
 
-export function fetchItems() {
-  return request('/items');
+export function fetchItems(categoryId) {
+  const query = categoryId ? `?category_id=${categoryId}` : '';
+  return request(`/items${query}`);
 }
 
 export function fetchItem(id) {

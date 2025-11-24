@@ -1,16 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { fetchItems } from '../api/apiclient';
 
 function ItemsPage() {
   const [items, setItems] = useState([]);
   const [error, setError] = useState(null);
+  const [searchParams] = useSearchParams();
+
+  const categoryIdParam = searchParams.get('category_id');
 
   useEffect(() => {
-    fetchItems()
+    const categoryId = categoryIdParam ? Number(categoryIdParam) : undefined;
+
+    fetchItems(categoryId)
       .then(setItems)
       .catch((err) => setError(err.message));
-  }, []);
+  }, [categoryIdParam]);
+
+  const heading = categoryIdParam ? `Your Items (Category ${categoryIdParam})` : 'Your Items';
 
   if (error) {
     return <p style={{ color: 'red' }}>Error: {error}</p>;
@@ -20,7 +27,7 @@ function ItemsPage() {
     <div>
       <h2>Your Items</h2>
       {items.length === 0 ? (
-        <p>No items yet.</p>
+        <p>No items found.</p>
       ) : (
         <ul>
           {items.map((item) => (

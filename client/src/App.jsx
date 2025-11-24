@@ -6,13 +6,14 @@ import ItemsPage from './pages/ItemsPage';
 import ItemDetailPage from './pages/ItemDetailPage';
 import NotFoundPage from './pages/NotFoundPage';
 import CreateItemPage from './pages/CreateItemPage';
+import DashboardPage from './pages/DashboardPage';
 
 function App() {
   return (
     <BrowserRouter>
       <Layout>
         <Routes>
-          <Route path="/" element={<ItemsPage />} />
+          <Route path="/" element={<DashboardPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/items" element={<ItemsPage />} />
           <Route path="/items/:id" element={<ItemDetailPage />} />
