@@ -61,3 +61,25 @@ export function deleteItem(id) {
 export function fetchCategories() {
   return request('/categories');
 }
+
+export function fetchTags() {
+  return request('/tags');
+}
+
+export function createTag(name) {
+  return request('/tags', {
+    method: 'POST',
+    body: JSON.stringify({ name }),
+  });
+}
+
+export function fetchCreators() {
+  return request('/creators');
+}
+
+export function createCreator(name) {
+  return request('/creators', {
+    method: 'POST',
+    body: JSON.stringify({ name }),
+  });
+}
