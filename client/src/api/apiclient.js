@@ -29,9 +29,12 @@ export function login(email, password) {
   });
 }
 
-export function fetchItems(categoryId) {
-  const query = categoryId ? `?category_id=${categoryId}` : '';
-  return request(`/items${query}`);
+export function fetchItems(userId, categoryId) {
+  const params = new URLSearchParams();
+  if (userId) params.append('user_id', userId);
+  if (categoryId) params.append('category_id', categoryId);
+
+  return request(`/items?${params.toString()}`);
 }
 
 export function fetchItem(id) {
@@ -58,8 +61,17 @@ export function deleteItem(id) {
   });
 }
 
-export function fetchCategories() {
-  return request('/categories');
+export function fetchCategories(userId) {
+  const params = new URLSearchParams();
+  if (userId) params.append('user_id', userId);
+  return request(`/categories?${params.toString()}`);
+}
+
+export function createCategory(name, userId) {
+  return request('/categories', {
+    method: 'POST',
+    body: JSON.stringify({ name, user_id: userId }),
+  });
 }
 
 export function fetchTags() {

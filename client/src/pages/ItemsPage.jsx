@@ -1,23 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { fetchItems } from '../api/apiclient';
+import { useAuth } from '../context/AuthContext';
 
 function ItemsPage() {
+  const { user } = useAuth();
   const [items, setItems] = useState([]);
   const [error, setError] = useState(null);
-  const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
 
-  const categoryIdParam = searchParams.get('category_id');
+  const categoryId = params.get('category_id');
 
   useEffect(() => {
-    const categoryId = categoryIdParam ? Number(categoryIdParam) : undefined;
+    if (!user) return;
 
-    fetchItems(categoryId)
+    fetchItems(user.id, categoryId)
       .then(setItems)
       .catch((err) => setError(err.message));
-  }, [categoryIdParam]);
+  }, [user, categoryId]);
 
-  const heading = categoryIdParam ? `Your Items (Category ${categoryIdParam})` : 'Your Items';
+  const heading = categoryId ? `Your Items (Category ${categoryId})` : 'Your Items';
 
   if (error) {
     return <p style={{ color: 'red' }}>Error: {error}</p>;
@@ -25,7 +28,7 @@ function ItemsPage() {
 
   return (
     <div>
-      <h2>Your Items</h2>
+      <h2>{heading}</h2>
       {items.length === 0 ? (
         <p>No items found.</p>
       ) : (

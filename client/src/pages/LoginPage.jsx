@@ -27,7 +27,7 @@ function LoginPage() {
     try {
       const data = await login(form.email, form.password);
       loginUser(data.user);
-      navigate('/items');
+      navigate('/');
     } catch (err) {
       setError(err.message);
     } finally {

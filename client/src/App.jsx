@@ -12,23 +12,88 @@ import ExportPage from './pages/ExportPage';
 import ManageTagsPage from './pages/ManageTagsPage';
 import ManageCategoriesPage from './pages/ManageCategoriesPage';
 import ManageCreatorsPage from './pages/ManageCreatorsPage';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
     <BrowserRouter>
       <Layout>
         <Routes>
-          <Route path="/" element={<DashboardPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/items" element={<ItemsPage />} />
-          <Route path="/items/:id" element={<ItemDetailPage />} />
-          <Route path="/items/new" element={<CreateItemPage />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/items"
+            element={
+              <ProtectedRoute>
+                <ItemsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/items/:id"
+            element={
+              <ProtectedRoute>
+                <ItemDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/items/new"
+            element={
+              <ProtectedRoute>
+                <CreateItemPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path="*" element={<NotFoundPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/settings/export" element={<ExportPage />} />
-          <Route path="/settings/tags" element={<ManageTagsPage />} />
-          <Route path="/settings/categories" element={<ManageCategoriesPage />} />
-          <Route path="/settings/creators" element={<ManageCreatorsPage />} />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/export"
+            element={
+              <ProtectedRoute>
+                <ExportPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/tags"
+            element={
+              <ProtectedRoute>
+                <ManageTagsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/categories"
+            element={
+              <ProtectedRoute>
+                <ManageCategoriesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/creators"
+            element={
+              <ProtectedRoute>
+                <ManageCreatorsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Layout>
     </BrowserRouter>

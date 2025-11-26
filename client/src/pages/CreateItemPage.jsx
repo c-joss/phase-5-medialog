@@ -53,8 +53,10 @@ function CreateItemPage() {
 
   useEffect(() => {
     async function loadCategories() {
+      if (!user) return;
+
       try {
-        const data = await fetchCategories();
+        const data = await fetchCategories(user.id);
         setCategories(data);
       } catch (err) {
         setError(err.message || 'Failed to load categories');
@@ -64,7 +66,7 @@ function CreateItemPage() {
     }
 
     loadCategories();
-  }, []);
+  }, [user]);
 
   return (
     <div>

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { fetchCategories } from '../api/apiclient';
+import { fetchCategories, createCategory } from '../api/apiclient';
+import { useAuth } from '../context/AuthContext';
 
 function ManageCategoriesPage() {
+  const { user } = useAuth();
   const [categories, setCategories] = useState([]);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [loading, setLoading] = useState(true);
@@ -9,38 +11,29 @@ function ManageCategoriesPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    fetchCategories()
+    if (!user) return;
+
+    fetchCategories(user.id)
       .then((data) => {
         setCategories(data);
         setLoading(false);
       })
       .catch((err) => {
-        setError(err.message || 'Failed to load categories');
+        setError(err.message);
         setLoading(false);
       });
-  }, []);
+  }, [user]);
 
   async function handleAddCategory(e) {
     e.preventDefault();
-    if (!newCategoryName.trim()) return;
+    if (!user || !newCategoryName.trim()) return;
 
     setSaving(true);
     setError(null);
 
     try {
-      const res = await fetch('http://127.0.0.1:5000/categories', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newCategoryName.trim() }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.errors?.join(', ') || 'Failed to create category');
-      }
-
-      setCategories((prev) => [...prev, data]);
+      const created = await createCategory(newCategoryName.trim(), user.id);
+      setCategories((prev) => [...prev, created]);
       setNewCategoryName('');
     } catch (err) {
       setError(err.message || 'Failed to create category');

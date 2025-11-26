@@ -1,23 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchCategories } from '../api/apiclient';
+import { useAuth } from '../context/AuthContext';
 
 function DashboardPage() {
+  const { user } = useAuth();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchCategories()
+    if (!user) return;
+
+    fetchCategories(user.id)
       .then((data) => {
         setCategories(data);
         setLoading(false);
       })
       .catch((err) => {
-        setError(err.message || 'Failed to load categories');
+        setError(err.message);
         setLoading(false);
       });
-  }, []);
+  }, [user]);
 
   if (loading) {
     return <p>Loading categories...</p>;
