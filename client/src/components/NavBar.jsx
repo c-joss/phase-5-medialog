@@ -11,7 +11,7 @@ function NavBar() {
         <Link to="/">MediaLog</Link>
       </div>
       <div>
-        <Link to="/items">Items</Link>
+        {user && <Link to="/items">Items</Link>}
 
         {user && <Link to="/settings">Settings</Link>}
 
