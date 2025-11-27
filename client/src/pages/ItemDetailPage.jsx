@@ -22,20 +22,43 @@ function ItemDetailPage() {
   }
 
   return (
-    <div>
-      <h2>{item.title}</h2>
-      <p>
-        <strong>Category ID:</strong> {item.category_id}
-      </p>
-      <p>
-        <strong>User ID:</strong> {item.user_id}
-      </p>
+    <div className="item-detail-page">
+      <h2 className="page-title">{item.title}</h2>
+      <div className="item-detail-card">
+        <div className="item-detail-image">
+          {item.image_url ? (
+            <img src={item.image_url} alt={item.title} />
+          ) : (
+            <span className="item-detail-image-placeholder">Image</span>
+          )}
+        </div>
 
-      {item.image_url && (
-        <p>
-          <img src={item.image_url} alt={item.title} style={{ maxWidth: '300px' }} />
-        </p>
-      )}
+        <div className="item-detail-info">
+          <div className="item-detail-row">
+            <span className="item-detail-label">Category:</span>
+            <span className="item-detail-value">{item.category_id}</span>
+          </div>
+
+          <div className="item-detail-row">
+            <span className="item-detail-label">Owner:</span>
+            <span className="item-detail-value">User {item.user_id}</span>
+          </div>
+
+          <div className="item-detail-row">
+            <span className="item-detail-label">Tags:</span>
+            <span className="item-detail-value">
+              {item.tags && item.tags.length > 0 ? item.tags.join(', ') : '—'}
+            </span>
+          </div>
+
+          <div className="item-detail-row">
+            <span className="item-detail-label">Creators:</span>
+            <span className="item-detail-value">
+              {item.creators && item.creators.length > 0 ? item.creators.join(', ') : '—'}
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
