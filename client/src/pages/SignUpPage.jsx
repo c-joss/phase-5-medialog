@@ -50,44 +50,77 @@ function SignUpPage() {
   }
 
   return (
-    <div>
-      <h2>Sign Up</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Username
-          <input name="username" value={form.username} onChange={handleChange} required />
-        </label>
+    <div className="form-page">
+      <div className="form-card">
+        <h2 className="page-title">Sign Up</h2>
+        <p className="page-subtitle">Create a new MediaLog account.</p>
+        <form onSubmit={handleSubmit} className="stacked-form">
+          <label className="stacked-field">
+            <span className="stacked-label">Username</span>
+            <input
+              name="username"
+              value={form.username}
+              onChange={handleChange}
+              className="stacked-input"
+              required
+            />
+          </label>
 
-        <label>
-          First name
-          <input name="first_name" value={form.first_name} onChange={handleChange} required />
-        </label>
+          <label className="stacked-field">
+            <span className="stacked-label">First name</span>
+            <input
+              name="first_name"
+              value={form.first_name}
+              onChange={handleChange}
+              className="stacked-input"
+              required
+            />
+          </label>
 
-        <label>
-          Last name
-          <input name="last_name" value={form.last_name} onChange={handleChange} required />
-        </label>
+          <label className="stacked-field">
+            <span className="stacked-label">Last name</span>
+            <input
+              name="last_name"
+              value={form.last_name}
+              onChange={handleChange}
+              className="stacked-input"
+              required
+            />
+          </label>
 
-        <label>
-          Email
-          <input name="email" type="email" value={form.email} onChange={handleChange} required />
-        </label>
+          <label className="stacked-field">
+            <span className="stacked-label">Email</span>
+            <input
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={handleChange}
+              className="stacked-input"
+              required
+            />
+          </label>
 
-        <label>
-          Password
-          <input
-            name="password"
-            type="password"
-            value={form.password}
-            onChange={handleChange}
-            required
-          />
-        </label>
+          <label className="stacked-field">
+            <span className="stacked-label">Password</span>
+            <input
+              name="password"
+              type="password"
+              value={form.password}
+              onChange={handleChange}
+              className="stacked-input"
+              required
+            />
+          </label>
 
-        <button type="submit">{loading ? 'Creating...' : 'Create Account'}</button>
+          {error && <p style={{ color: 'red' }}>{error}</p>}
 
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-      </form>
+          <div className="form-footer">
+            <button type="submit" disabled={loading} className="btn-primary">
+              {loading ? 'Creating account…' : 'Create Account'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
