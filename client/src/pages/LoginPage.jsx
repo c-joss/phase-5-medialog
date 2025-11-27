@@ -36,35 +36,50 @@ function LoginPage() {
   }
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Email
-          <input name="email" type="email" value={form.email} onChange={handleChange} required />
-        </label>
+    <div className="auth-page">
+      <div className="auth-title-block">
+        <h1 className="app-title">MediaLog</h1>
+        <p className="app-subtitle">your personal library</p>
+      </div>
+      <div className="auth-card">
+        <form onSubmit={handleSubmit} className="auth-form">
+          <label className="auth-label">
+            Email
+            <input
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={handleChange}
+              className="auth-input"
+              required
+            />
+          </label>
 
-        <label>
-          Password
-          <input
-            name="password"
-            type="password"
-            value={form.password}
-            onChange={handleChange}
-            required
-          />
-        </label>
+          <label className="auth-label">
+            Password
+            <input
+              name="password"
+              type="password"
+              value={form.password}
+              onChange={handleChange}
+              className="auth-input"
+              required
+            />
+          </label>
 
-        <button type="submit" disabled={loading}>
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
+          {error && <p className="auth-error">{error}</p>}
 
-        <button type="button" onClick={() => navigate('/signup')} style={{ marginTop: '10px' }}>
-          Sign Up
-        </button>
+          <div className="auth-actions">
+            <button type="submit" disabled={loading} className="btn-primary">
+              {loading ? 'Logging in...' : 'Login'}
+            </button>
 
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-      </form>
+            <button type="button" onClick={() => navigate('/signup')} className="btn-secondary">
+              Sign Up
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
