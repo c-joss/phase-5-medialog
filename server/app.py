@@ -163,7 +163,18 @@ def create_app():
     @app.get("/items")
     def list_items():
 
-        items = Item.query.all()
+        user_id = request.args.get("user_id", type=int)
+        category_id = request.args.get("category_id", type=int)
+
+        if not user_id:
+            return {"errors": ["user_id query parameter is required"]}, 400
+
+        query = Item.query.filter_by(user_id=user_id)
+
+        if category_id:
+            query = query.filter_by(category_id=category_id)
+
+        items = query.all()
 
         results = []
         for item in items:
@@ -173,11 +184,9 @@ def create_app():
                 "user_id": item.user_id,
                 "category_id": item.category_id,
                 "image_url": item.image_url,
-                "tags": [t.name for t in item.tags],
-                "creators": [c.name for c in item.creators],
             })
 
-        return jsonify(results), 200
+        return results, 200
     
     
     @app.get("/items/<int:item_id>")
@@ -444,6 +453,46 @@ def create_app():
             "tags": [t.name for t in item.tags],
             "creators": [c.name for c in item.creators],
         }, 200
+      
+    @app.get("/categories")
+    def list_categories():
+        user_id = request.args.get("user_id", type=int)
+        if not user_id:
+            return {"errors": ["user_id query parameter is required"]}, 400
+
+        categories = Category.query.filter_by(user_id=user_id).order_by(Category.name).all()
+
+        return [
+            {"id": c.id, "name": c.name, "user_id": c.user_id}
+            for c in categories
+        ], 200
+    
+    @app.post("/categories")
+    def create_category():
+        data = request.get_json() or {}
+        name = (data.get("name") or "").strip()
+        user_id = data.get("user_id")
+
+        if not name or not user_id:
+            return {"errors": ["Name and user_id are required"]}, 400
+
+        existing = Category.query.filter_by(name=name, user_id=user_id).first()
+        if existing:
+            return {
+                "id": existing.id,
+                "name": existing.name,
+                "user_id": existing.user_id,
+            }, 200
+
+        category = Category(name=name, user_id=user_id)
+        db.session.add(category)
+        db.session.commit()
+
+        return {
+            "id": category.id,
+            "name": category.name,
+            "user_id": category.user_id,
+        }, 201
  
     return app
 

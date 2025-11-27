@@ -32,16 +32,20 @@ function DashboardPage() {
   }
 
   return (
-    <div>
-      <h2>Dashboard</h2>
-      <p>Select a category to view its items.</p>
+    <div className="dashboard-page">
+      <h2 className="page-title">Dashboard</h2>
+      <p className="page-subtitle">Select a category to view its items.</p>
 
-      <div>
+      <div className="dashboard-grid">
         {categories.map((category) => (
           <div key={category.id}>
-            <h3>
-              <Link to={`/items?category_id=${category.id}`}>{category.name}</Link>
-            </h3>
+            <Link
+              key={category.id}
+              to={`/items?category_id=${category.id}`}
+              className="dashboard-tile"
+            >
+              <span className="dashboard-tile-name">{category.name}</span>
+            </Link>
           </div>
         ))}
       </div>

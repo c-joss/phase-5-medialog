@@ -45,8 +45,8 @@ def run_seed():
             password="guestpassword",
         )
 
-        game_cat = Category(name="Game")
-        book_cat = Category(name="Book")
+        game_cat = Category(name="Game", user=jack)
+        book_cat = Category(name="Book", user=jack)
 
         witcher = Item(
             title="The Witcher 3",

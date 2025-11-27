@@ -21,12 +21,19 @@ class Category(db.Model):
     __tablename__ = "categories"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False, unique=True)
+    name = db.Column(db.String(50), nullable=False)
+
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user = db.relationship("User", backref="categories")
 
     items = db.relationship("Item", backref="category", lazy=True)
 
+    __table_args__ = (
+        db.UniqueConstraint("user_id", "name", name="uq_category_user_name"),
+    )
+
     def __repr__(self):
-        return f"<Category {self.name}>"
+        return f"<Category {self.name} (user_id={self.user_id})>"
     
 class Item(db.Model):
     __tablename__ = "items"
