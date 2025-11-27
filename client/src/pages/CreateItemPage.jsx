@@ -69,39 +69,64 @@ function CreateItemPage() {
   }, [user]);
 
   return (
-    <div>
-      <h2>Add New Item</h2>
+    <div className="form-page">
+      <div className="form-card">
+        <h2 className="page-title">Add New Item</h2>
+        <p className="page-subtitle">Create a new entry in your collection.</p>
 
-      <form onSubmit={handleSubmit}>
-        <label>
-          Title <input name="title" value={form.title} onChange={handleChange} required />
-        </label>
+        <form onSubmit={handleSubmit} className="stacked-form">
+          <label className="stacked-field">
+            <span className="stacked-label">Title</span>
+            <input
+              name="title"
+              value={form.title}
+              onChange={handleChange}
+              className="stacked-input"
+              required
+            />
+          </label>
 
-        <label>
-          Image URL <input name="image_url" value={form.image_url} onChange={handleChange} />
-        </label>
+          <label className="stacked-field">
+            <span className="stacked-label">Image URL</span>
+            <input
+              name="image_url"
+              value={form.image_url}
+              onChange={handleChange}
+              className="stacked-input"
+              placeholder="Optional"
+            />
+          </label>
 
-        <label>
-          Category
-          <select name="category_id" value={form.category_id} onChange={handleChange} required>
-            <option value="">
-              {categoriesLoading ? 'Loading categories...' : 'Select a category'}
-            </option>
-
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
+          <label className="stacked-field">
+            <span className="stacked-label">Category</span>
+            <select
+              name="category_id"
+              value={form.category_id}
+              onChange={handleChange}
+              className="stacked-select"
+              required
+            >
+              <option value="">
+                {categoriesLoading ? 'Loading categories...' : 'Select a category'}
               </option>
-            ))}
-          </select>
-        </label>
 
-        <button type="submit" disabled={loading}>
-          {loading ? 'Creating...' : 'Create Item'}
-        </button>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </label>
 
-        {error && <p className="error-text">{error}</p>}
-      </form>
+          {error && <p className="error-text">{error}</p>}
+
+          <div className="form-footer">
+            <button type="submit" disabled={loading} className="btn-primary">
+              {loading ? 'Creating...' : 'Create Item'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

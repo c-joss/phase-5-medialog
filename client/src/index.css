@@ -392,3 +392,75 @@ nav button:hover {
     grid-template-columns: 1fr;
   }
 }
+
+/* CreateItemPage */
+
+.form-page {
+  padding: 32px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.form-card {
+  width: 100%;
+  max-width: 600px;
+  background-color: var(--color-linen);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-pale-oak);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  padding: 24px 28px 28px;
+}
+
+.form-card .page-title {
+  text-align: left;
+  margin-bottom: 4px;
+}
+
+.form-card .page-subtitle {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.stacked-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stacked-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.9rem;
+}
+
+.stacked-label {
+  font-weight: 600;
+}
+
+.stacked-input,
+.stacked-select {
+  padding: 8px 10px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  font-size: 0.95rem;
+}
+
+.stacked-input:focus,
+.stacked-select:focus {
+  outline: 2px solid var(--color-pale-oak);
+  outline-offset: 1px;
+}
+
+.form-footer {
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.error-text {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: #b00020;
+}
