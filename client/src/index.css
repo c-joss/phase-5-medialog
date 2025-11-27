@@ -501,3 +501,80 @@ nav button:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
+
+/* Settings sub pages */
+
+.settings-subpage {
+  padding: 32px 0;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.settings-subpage .page-title {
+  margin: 0 0 4px;
+}
+
+.settings-subpage .page-subtitle {
+  margin: 0 0 16px;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.simple-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.simple-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.9rem;
+}
+
+.simple-form input {
+  padding: 8px 10px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+}
+
+.simple-form button {
+  align-self: flex-start;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: none;
+  background-color: var(--color-pale-oak);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.simple-form button:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.simple-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.simple-list li {
+  padding: 8px 12px;
+  border-radius: var(--radius-card);
+  background-color: var(--color-linen);
+  border: 1px solid var(--color-pale-oak);
+  font-size: 0.9rem;
+}
+
+.error-message {
+  margin: 4px 0 8px;
+  font-size: 0.85rem;
+  color: #b00020;
+}

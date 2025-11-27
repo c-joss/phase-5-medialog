@@ -48,7 +48,8 @@ function ManageCategoriesPage() {
 
   return (
     <div className="settings-subpage manage-categories-page">
-      <h2>Manage Categories</h2>
+      <h2 className="page-title">Manage Categories</h2>
+      <p className="page-subtitle">Organise your collection into custom categories.</p>
       {error && <p className="error-message">{error}</p>}
 
       <form onSubmit={handleAddCategory} className="simple-form">

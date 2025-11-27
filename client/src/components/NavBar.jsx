@@ -8,7 +8,7 @@ function NavBar() {
   return (
     <nav>
       <div>
-        <Link to="/">Medialog</Link>
+        <Link to="/">MediaLog</Link>
       </div>
       <div>
         <Link to="/items">Items</Link>

@@ -44,7 +44,8 @@ function ManageTagsPage() {
 
   return (
     <div className="settings-subpage manage-tags-page">
-      <h2>Manage Tags</h2>
+      <h2 className="page-title">Manage Tags</h2>
+      <p className="page-subtitle">Create and view tags used to describe your items.</p>
       {error && <p className="error-message">{error}</p>}
 
       <form onSubmit={handleAddTag} className="simple-form">

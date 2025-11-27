@@ -44,7 +44,8 @@ function ManageCreatorsPage() {
 
   return (
     <div className="settings-subpage manage-creators-page">
-      <h2>Manage Creators</h2>
+      <h2 className="page-title">Manage Creators</h2>
+      <p className="page-subtitle">Maintain the list of authors, directors, artists and more.</p>
       {error && <p className="error-message">{error}</p>}
 
       <form onSubmit={handleAddCreator} className="simple-form">
