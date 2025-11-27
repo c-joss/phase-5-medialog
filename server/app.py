@@ -1,12 +1,18 @@
 import os
+import io
+import csv
 
 from .config import Config
 from flask import Flask, jsonify
 from flask_migrate import Migrate
 from flask_cors import CORS
 from dotenv import load_dotenv
-from flask import request, jsonify
+from flask import request, jsonify, current_app
 from .models import db, User, Category, Item, Tag, Creator, Review
+import smtplib
+import threading
+from email.message import EmailMessage
+
 
 load_dotenv()
 
@@ -493,6 +499,106 @@ def create_app():
             "name": category.name,
             "user_id": category.user_id,
         }, 201
+    
+    @app.get("/export/items")
+    def export_items():
+        user_id = request.args.get("user_id", type=int)
+        if not user_id:
+            return {"errors": ["user_id query parameter is required"]}, 400
+
+        items = Item.query.filter_by(user_id=user_id).all()
+
+        output = io.StringIO()
+        writer = csv.writer(output)
+
+        writer.writerow(["id", "title", "category_id", "image_url"])
+
+        for item in items:
+            writer.writerow([
+                item.id,
+                item.title,
+                item.category_id,
+                item.image_url or "",
+            ])
+
+        csv_data = output.getvalue()
+
+        response = app.response_class(
+            csv_data,
+            mimetype="text/csv",
+            headers={
+                "Content-Disposition": (
+                    f"attachment; filename=medialog_items_user_{user_id}.csv"
+                )
+            },
+        )
+        return response
+
+    @app.post("/export/items/email")
+    def email_items_export():
+        data = request.get_json() or {}
+        user_id = data.get("user_id")
+
+        if not user_id:
+            return {"errors": ["user_id is required"]}, 400
+
+        user = User.query.get(user_id)
+        if not user or not user.email:
+            return {"errors": ["User with email not found"]}, 400
+
+        items = Item.query.filter_by(user_id=user_id).all()
+
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(["id", "title", "category_id", "image_url"])
+        for item in items:
+            writer.writerow([
+                item.id,
+                item.title,
+                item.category_id,
+                item.image_url or "",
+            ])
+
+        csv_data = output.getvalue()
+
+        app_obj = current_app._get_current_object()
+
+        threading.Thread(
+            target=send_export_email,
+            args=(app_obj, user.email, csv_data),
+            daemon=True,
+        ).start()
+
+        return {
+            "message": f"Export job created. A CSV will be sent to {user.email}."
+        }, 200
+    
+    def send_export_email(app, to_email, csv_data):
+        with app.app_context():
+            msg = EmailMessage()
+            msg["Subject"] = "Your MediaLog Export"
+            msg["From"] = app.config["MAIL_FROM"]
+            msg["To"] = to_email
+
+            msg.set_content("Your MediaLog CSV export is attached.")
+
+            msg.add_attachment(
+                csv_data.encode("utf-8"),
+                maintype="text",
+                subtype="csv",
+                filename="medialog-export.csv",
+            )
+
+            with smtplib.SMTP(
+                app.config["MAIL_SERVER"],
+                app.config["MAIL_PORT"],
+            ) as smtp:
+                smtp.starttls()
+                smtp.login(
+                    app.config["MAIL_USERNAME"],
+                    app.config["MAIL_PASSWORD"],
+                )
+                smtp.send_message(msg)
  
     return app
 
