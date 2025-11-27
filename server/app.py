@@ -189,6 +189,7 @@ def create_app():
                 "title": item.title,
                 "user_id": item.user_id,
                 "category_id": item.category_id,
+                "category_name": item.category.name if item.category else None,
                 "image_url": item.image_url,
             })
 
@@ -208,6 +209,7 @@ def create_app():
             "title": item.title,
             "user_id": item.user_id,
             "category_id": item.category_id,
+            "category_name": item.category.name if item.category else None,
             "image_url": item.image_url,
             "tags": [t.name for t in item.tags],
             "creators": [c.name for c in item.creators],

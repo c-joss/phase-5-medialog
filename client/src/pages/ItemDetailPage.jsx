@@ -36,7 +36,7 @@ function ItemDetailPage() {
         <div className="item-detail-info">
           <div className="item-detail-row">
             <span className="item-detail-label">Category:</span>
-            <span className="item-detail-value">{item.category_id}</span>
+            <span className="item-detail-value">{item.category_name}</span>
           </div>
 
           <div className="item-detail-row">

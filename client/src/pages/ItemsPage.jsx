@@ -45,7 +45,7 @@ function ItemsPage() {
 
               <div className="item-card-body">
                 <h3 className="item-card-title">{item.title}</h3>
-                <p className="item-card-meta">Category ID: {item.category_id}</p>
+                <p className="item-card-meta">Category: {item.category_name}</p>
               </div>
             </Link>
           ))}
