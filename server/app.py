@@ -374,8 +374,8 @@ def create_app():
         data = request.get_json() or {}
         tag_ids = data.get("tag_ids")
 
-        if not isinstance(tag_ids, list) or not tag_ids:
-            return {"errors": ["tag_ids must be a non-empty list"]}, 400
+        if tag_ids is None or not isinstance(tag_ids, list):
+            return {"errors": ["tag_ids must be a list"]}, 400
         
         tags = Tag.query.filter(Tag.id.in_(tag_ids)).all()
 
@@ -390,6 +390,7 @@ def create_app():
             "title": item.title,
             "user_id": item.user_id,
             "category_id": item.category_id,
+            "category_name": item.category.name if item.category else None,
             "image_url": item.image_url,
             "tags": [t.name for t in item.tags],
             "creators": [c.name for c in item.creators],
@@ -441,8 +442,8 @@ def create_app():
         data = request.get_json() or {}
         creator_ids = data.get("creator_ids")
 
-        if not isinstance(creator_ids, list) or not creator_ids:
-            return {"errors": ["creator_ids must be a non-empty list"]}, 400
+        if creator_ids is None or not isinstance(creator_ids, list):
+            return {"errors": ["creator_ids must be a list"]}, 400
         
         creators = Creator.query.filter(Creator.id.in_(creator_ids)).all()
 
@@ -457,6 +458,7 @@ def create_app():
             "title": item.title,
             "user_id": item.user_id,
             "category_id": item.category_id,
+            "category_name": item.category.name if item.category else None,
             "image_url": item.image_url,
             "tags": [t.name for t in item.tags],
             "creators": [c.name for c in item.creators],

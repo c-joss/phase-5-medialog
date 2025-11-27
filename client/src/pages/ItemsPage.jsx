@@ -4,6 +4,7 @@ import { fetchItems } from '../api/apiclient';
 import { useAuth } from '../context/AuthContext';
 
 function ItemsPage() {
+  const [search, setSearch] = useState('');
   const { user } = useAuth();
   const [items, setItems] = useState([]);
   const [error, setError] = useState(null);
@@ -22,18 +23,30 @@ function ItemsPage() {
 
   const heading = categoryId ? 'Your Items' : 'Your Items';
 
+  const filteredItems = items.filter((item) =>
+    item.title.toLowerCase().includes(search.toLowerCase()),
+  );
+
   if (error) {
     return <p style={{ color: 'red' }}>Error: {error}</p>;
   }
 
   return (
     <div className="items-page">
+      <div className="items-search">
+        <input
+          type="text"
+          placeholder="Search items..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
       <h2 className="page-title">{heading}</h2>
-      {items.length === 0 ? (
+      {filteredItems.length === 0 ? (
         <p className="empty-state">No items found.</p>
       ) : (
         <div className="items-list">
-          {items.map((item) => (
+          {filteredItems.map((item) => (
             <Link key={item.id} to={`/items/${item.id}`} className="item-card">
               <div className="item-card-image">
                 {item.image_url ? (
