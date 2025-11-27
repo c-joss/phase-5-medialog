@@ -19,6 +19,7 @@ function NavBar() {
 
         {user ? (
           <>
+            <span className="nav-divider">|</span>
             <span>{user.first_name || user.username}</span>
             <button type="button" onClick={logoutUser}>
               Logout
