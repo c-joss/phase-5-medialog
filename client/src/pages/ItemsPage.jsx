@@ -20,26 +20,36 @@ function ItemsPage() {
       .catch((err) => setError(err.message));
   }, [user, categoryId]);
 
-  const heading = categoryId ? `Your Items (Category ${categoryId})` : 'Your Items';
+  const heading = categoryId ? 'Your Items' : 'Your Items';
 
   if (error) {
     return <p style={{ color: 'red' }}>Error: {error}</p>;
   }
 
   return (
-    <div>
-      <h2>{heading}</h2>
+    <div className="items-page">
+      <h2 className="page-title">{heading}</h2>
       {items.length === 0 ? (
-        <p>No items found.</p>
+        <p className="empty-state">No items found.</p>
       ) : (
-        <ul>
+        <div className="items-list">
           {items.map((item) => (
-            <li key={item.id}>
-              <Link to={`/items/${item.id}`}>{item.title}</Link>{' '}
-              <span>(category {item.category_id})</span>
-            </li>
+            <Link key={item.id} to={`/items/${item.id}`} className="item-card">
+              <div className="item-card-image">
+                {item.image_url ? (
+                  <img src={item.image_url} alt={item.title} />
+                ) : (
+                  <span className="item-card-image-placeholder">Image</span>
+                )}
+              </div>
+
+              <div className="item-card-body">
+                <h3 className="item-card-title">{item.title}</h3>
+                <p className="item-card-meta">Category ID: {item.category_id}</p>
+              </div>
+            </Link>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );
