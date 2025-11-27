@@ -121,3 +121,17 @@ export function emailItemsExport(userId) {
     body: JSON.stringify({ user_id: userId }),
   });
 }
+
+export function updateItemTags(itemId, tagIds) {
+  return request(`/items/${itemId}/tags`, {
+    method: 'POST',
+    body: JSON.stringify({ tag_ids: tagIds }),
+  });
+}
+
+export function updateItemCreators(itemId, creatorIds) {
+  return request(`/items/${itemId}/creators`, {
+    method: 'POST',
+    body: JSON.stringify({ creator_ids: creatorIds }),
+  });
+}

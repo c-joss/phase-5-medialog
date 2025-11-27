@@ -196,12 +196,14 @@ nav button:hover {
 .page-title {
   margin: 0 0 8px;
   font-size: 1.8rem;
+  text-align: center;
 }
 
 .page-subtitle {
   margin: 0 0 24px;
   font-size: 0.95rem;
   color: var(--color-text-muted);
+  text-align: center;
 }
 
 .dashboard-grid {
@@ -391,6 +393,11 @@ nav button:hover {
   .item-detail-row {
     grid-template-columns: 1fr;
   }
+}
+
+.item-detail-actions {
+  text-align: center;
+  margin-top: 20px;
 }
 
 /* CreateItemPage */
