@@ -95,3 +95,29 @@ export function createCreator(name) {
     body: JSON.stringify({ name }),
   });
 }
+
+export async function downloadItemsExport(userId) {
+  const params = new URLSearchParams();
+  if (userId) params.append('user_id', userId);
+
+  const res = await fetch(`${BASE_URL}/export/items?${params.toString()}`);
+
+  if (!res.ok) {
+    let message = 'Failed to export items';
+    try {
+      const text = await res.text();
+      const data = JSON.parse(text);
+      message = data?.errors?.join(', ') || data?.error || message;
+    } catch (_) {}
+    throw new Error(message);
+  }
+
+  return res.blob();
+}
+
+export function emailItemsExport(userId) {
+  return request('/export/items/email', {
+    method: 'POST',
+    body: JSON.stringify({ user_id: userId }),
+  });
+}
