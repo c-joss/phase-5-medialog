@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { signup } from '../api/apiclient';
 
 function SignUpPage() {
   const navigate = useNavigate();
@@ -28,22 +29,12 @@ function SignUpPage() {
     setLoading(true);
 
     try {
-      const res = await fetch('http://127.0.0.1:5000/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      });
+      const user = await signup(form);
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.errors?.join(', ') || 'Sign up failed');
-      }
-
-      loginUser(data);
+      loginUser(user);
       navigate('/');
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Sign up failed');
     } finally {
       setLoading(false);
     }
