@@ -616,23 +616,31 @@ def create_app():
     
     @app.get("/smtp-test")
     def smtp_test():
-        import smtplib
-        from email.message import EmailMessage
-
-        msg = EmailMessage()
-        msg["Subject"] = "MediaLog SMTP Test"
-        msg["From"] = app.config["MAIL_FROM"]
-        msg["To"] = "test@example.com"
-        msg.set_content("If you see this in Mailtrap, SMTP is working.")
-
         try:
-            with smtplib.SMTP(app.config["MAIL_SERVER"], app.config["MAIL_PORT"]) as smtp:
+            import smtplib
+            from email.message import EmailMessage
+
+            msg = EmailMessage()
+            msg["Subject"] = "MediaLog SMTP Test"
+            msg["From"] = app.config.get("MAIL_FROM")
+            msg["To"] = "test@example.com"
+            msg.set_content("If you see this in Mailtrap, SMTP is working.")
+
+            with smtplib.SMTP(
+                app.config.get("MAIL_SERVER"),
+                app.config.get("MAIL_PORT"),
+            ) as smtp:
                 smtp.starttls()
-                smtp.login(app.config["MAIL_USERNAME"], app.config["MAIL_PASSWORD"])
+                smtp.login(
+                    app.config.get("MAIL_USERNAME"),
+                    app.config.get("MAIL_PASSWORD"),
+                )
                 smtp.send_message(msg)
+
             return {"ok": True, "message": "SMTP test sent"}, 200
+
         except Exception as e:
-            return {"ok": False, "error": str(e)}, 500
+            return {"ok": False, "error": repr(e)}, 500
 
     return app
 
