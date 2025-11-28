@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   fetchItem,
   fetchTags,
   fetchCreators,
   updateItemTags,
   updateItemCreators,
+  deleteItem,
 } from '../api/apiclient';
 
 function ItemDetailPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [item, setItem] = useState(null);
   const [error, setError] = useState(null);
 
@@ -96,6 +98,24 @@ function ItemDetailPage() {
     }
   }
 
+  async function handleDelete() {
+    if (!item) return;
+
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${item.title}"? This action cannot be undone.`,
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await deleteItem(item.id);
+      window.alert('Item deleted successfully.');
+      navigate('/items');
+    } catch (err) {
+      window.alert(err.message || 'Failed to delete item.');
+    }
+  }
+
   if (error) {
     return <p style={{ color: 'red' }}>Error: {error}</p>;
   }
@@ -148,6 +168,14 @@ function ItemDetailPage() {
               }}
             >
               {editing ? 'Cancel' : 'Edit tags & creators'}
+            </button>
+            <button
+              type="button"
+              className="btn-primary"
+              style={{ marginLeft: '10px' }}
+              onClick={handleDelete}
+            >
+              Delete Item
             </button>
           </div>
 
