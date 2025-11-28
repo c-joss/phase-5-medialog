@@ -142,16 +142,3 @@ export function updateItemCreators(itemId, creatorIds) {
     body: JSON.stringify({ creator_ids: creatorIds }),
   });
 }
-
-export function signup({ username, first_name, last_name, email, password }) {
-  return request('/users', {
-    method: 'POST',
-    body: JSON.stringify({
-      username,
-      first_name,
-      last_name,
-      email,
-      password,
-    }),
-  });
-}
