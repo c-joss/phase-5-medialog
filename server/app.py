@@ -603,7 +603,17 @@ def create_app():
                     app.config["MAIL_PASSWORD"],
                 )
                 smtp.send_message(msg)
- 
+
+    @app.get("/smtp-debug")
+    def smtp_debug():
+        return {
+            "MAIL_SERVER": app.config.get("MAIL_SERVER"),
+            "MAIL_PORT": app.config.get("MAIL_PORT"),
+            "MAIL_USERNAME": app.config.get("MAIL_USERNAME"),
+            "MAIL_PASSWORD": "***" if app.config.get("MAIL_PASSWORD") else None,
+            "MAIL_FROM": app.config.get("MAIL_FROM"),
+        }, 200
+
     return app
 
 app = create_app()
