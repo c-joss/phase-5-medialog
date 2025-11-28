@@ -29,6 +29,13 @@ export function login(email, password) {
   });
 }
 
+export function signup(form) {
+  return request('/users', {
+    method: 'POST',
+    body: JSON.stringify(form),
+  });
+}
+
 export function fetchItems(userId, categoryId) {
   const params = new URLSearchParams();
   if (userId) params.append('user_id', userId);
@@ -133,5 +140,18 @@ export function updateItemCreators(itemId, creatorIds) {
   return request(`/items/${itemId}/creators`, {
     method: 'POST',
     body: JSON.stringify({ creator_ids: creatorIds }),
+  });
+}
+
+export function signup({ username, first_name, last_name, email, password }) {
+  return request('/users', {
+    method: 'POST',
+    body: JSON.stringify({
+      username,
+      first_name,
+      last_name,
+      email,
+      password,
+    }),
   });
 }
