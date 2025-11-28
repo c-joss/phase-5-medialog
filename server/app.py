@@ -1,6 +1,8 @@
 import os
 import io
 import csv
+import base64
+import mailtrap as mt
 
 from .config import Config
 from flask import Flask, jsonify
@@ -11,7 +13,6 @@ from flask import request, jsonify, current_app
 from .models import db, User, Category, Item, Tag, Creator, Review
 import smtplib
 import threading
-from email.message import EmailMessage
 
 
 load_dotenv()
@@ -579,30 +580,50 @@ def create_app():
     
     def send_export_email(app, to_email, csv_data):
         with app.app_context():
-            msg = EmailMessage()
-            msg["Subject"] = "Your MediaLog Export"
-            msg["From"] = app.config["MAIL_FROM"]
-            msg["To"] = to_email
+            api_token = app.config.get("MAILTRAP_API_TOKEN")
+            inbox_id = app.config.get("MAILTRAP_INBOX_ID")
 
-            msg.set_content("Your MediaLog CSV export is attached.")
+            if not api_token or not inbox_id:
+                app.logger.error(
+                    "Mailtrap API token or inbox ID missing. "
+                    "MAILTRAP_API_TOKEN=%r, MAILTRAP_INBOX_ID=%r",
+                    bool(api_token),
+                    bool(inbox_id),
+                )
+                return
 
-            msg.add_attachment(
-                csv_data.encode("utf-8"),
-                maintype="text",
-                subtype="csv",
-                filename="medialog-export.csv",
+            client = mt.MailtrapClient(
+                token=api_token,
+                sandbox=True,
+                inbox_id=inbox_id,
             )
 
-            with smtplib.SMTP(
-                app.config["MAIL_SERVER"],
-                app.config["MAIL_PORT"],
-            ) as smtp:
-                smtp.starttls()
-                smtp.login(
-                    app.config["MAIL_USERNAME"],
-                    app.config["MAIL_PASSWORD"],
-                )
-                smtp.send_message(msg)
+            csv_bytes = csv_data.encode("utf-8")
+            csv_b64 = base64.b64encode(csv_bytes)
+
+            mail = mt.Mail(
+                sender=mt.Address(
+                    email="no-reply@medialog.test",
+                    name="MediaLog",
+                ),
+                to=[mt.Address(email=to_email)],
+                subject="Your MediaLog Export",
+                text="Your MediaLog CSV export is attached.",
+                attachments=[
+                    mt.Attachment(
+                        content=csv_b64,
+                        filename="medialog-export.csv",
+                        disposition=mt.Disposition.ATTACHMENT,
+                        mimetype="text/csv",
+                    )
+                ],
+            )
+
+            try:
+                client.send(mail)
+                app.logger.info("Export email sent to %s via Mailtrap API", to_email)
+            except Exception as e:
+                app.logger.error("Failed to send export email via Mailtrap: %r", e)
 
     @app.get("/smtp-debug")
     def smtp_debug():

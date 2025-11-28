@@ -37,3 +37,5 @@ class Config:
         or os.environ.get("SMTP_FROM")
         or "MediaLog <no-reply@medialog.test>"
     )
+    MAILTRAP_API_TOKEN = os.environ.get("MAILTRAP_API_TOKEN")
+    MAILTRAP_INBOX_ID = os.environ.get("MAILTRAP_INBOX_ID")
