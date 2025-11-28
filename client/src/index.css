@@ -16,6 +16,16 @@
   box-sizing: border-box;
 }
 
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
 body {
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -24,7 +34,7 @@ body {
 }
 
 main {
-  max-width: 960px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 32px 16px 48px;
 }
@@ -36,6 +46,8 @@ nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 nav > div:first-child a {
@@ -74,11 +86,33 @@ nav button:hover {
   opacity: 0.9;
 }
 
+.nav-wrapper {
+  background-color: var(--color-taupe);
+  width: 100%;
+}
+
+.nav-wrapper nav {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .nav-divider {
   margin: 0 12px;
   color: #f5f5f5;
   opacity: 0.6;
   font-size: 1rem;
+}
+
+.footer {
+  text-align: center;
+  padding: 20px 0;
+  color: #5e4e3c;
+  font-size: 0.9rem;
+  opacity: 0.8;
 }
 
 /* LoginPage */
@@ -249,13 +283,16 @@ nav button:hover {
 
 .items-page {
   padding: 32px 0;
+  max-width: 1200px;
+  min-width: 1000px;
+  margin: 0 auto;
 }
 
 .items-list {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  max-width: 640px;
+  max-width: 500px;
   margin: 24px auto 0;
 }
 
@@ -324,19 +361,18 @@ nav button:hover {
   color: var(--color-text-muted);
 }
 
-.items-search {
-  display: flex;
-  justify-content: flex-end;
-  margin: 10px 0 0 0;
-  padding-right: 20px;
-}
-
 .items-search input {
   width: 260px;
   padding: 8px 12px;
   border-radius: 6px;
   border: 1px solid #c9c9a8;
   font-size: 1rem;
+  display: inline-block;
+}
+
+.items-search {
+  margin-bottom: 8px;
+  text-align: right;
 }
 
 /* ItemDetailPage */

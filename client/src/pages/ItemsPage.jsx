@@ -41,7 +41,9 @@ function ItemsPage() {
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
+
       <h2 className="page-title">{heading}</h2>
+
       {filteredItems.length === 0 ? (
         <p className="empty-state">No items found.</p>
       ) : (
