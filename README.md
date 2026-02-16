@@ -3,8 +3,6 @@
 A full-stack web application for organising books, games, films, music, and other personal media.
 Built with Flask, React, PostgreSQL, and deployed on Render, MediaLog lets users create an account, manage their own items and categories, assign creators and tags, write reviews, and export their entire library as a downloadable CSV or emailed attachment.
 
-This project was developed for the Phase 5 Full-Stack Assessment.
-
 Website: https://phase-5-medialog.onrender.com
 
 ---
